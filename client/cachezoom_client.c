@@ -24,7 +24,6 @@ int main(int argc, char * argv[])
   int _FD_;
   struct cachezoom_generic_param param;
   OPEN_CACHEZOOM_DRV();
-   
   
   int sw = atoi(argv[1]);
 

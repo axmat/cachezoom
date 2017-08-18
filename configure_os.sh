@@ -1,4 +1,5 @@
-# GRUB_CMDLINE_LINUX_DEFAULT="quiet splash isolcpus=1,2,3 nohz_full=1,2,3 nosmep nosmap"
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash isolcpus=1,2,3 nohz_full=1,2,3 nosmep nosmap"
+#sudo update-grub
 
 # Disable logical CPU pairs
 echo 0 > /sys/devices/system/cpu/cpu2/online
@@ -8,15 +9,11 @@ echo 0 > /sys/devices/system/cpu/cpu3/online
 cd /proc/irq/
 echo 1 | tee */smp_affinity
 
-# Set CPU frequency scaling to performance mode for all cpus
+# CPU Frequency
 cd /sys/devices/system/cpu/
-
-sudo cpupower frequency-set -f 2600000
-
-# echo performance | tee cpu*/cpufreq/scaling_governor
-# echo 1900000 | tee cpu*/cpufreq/scaling_max_freq
-# echo 1800000 | tee cpu*/cpufreq/scaling_min_freq
-
+echo performance | tee cpu*/cpufreq/scaling_governor
+echo 2010000 | tee cpu*/cpufreq/scaling_max_freq
+echo 2000000 | tee cpu*/cpufreq/scaling_min_freq
 
 
 

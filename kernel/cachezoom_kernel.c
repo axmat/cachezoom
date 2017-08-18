@@ -157,7 +157,7 @@ int file_write(struct file* file, unsigned long long offset, unsigned char* data
 void write_down_measurements(void)
 {
   struct file * fp;
-  fp = file_open("../../data/samples.data", O_WRONLY|O_CREAT, 0644);
+  fp = file_open("samples.data", O_WRONLY|O_CREAT, 0644);
   file_write(fp, 0, measurements, sizeof(Measurement) * MAX_MEASUREMENT);
   vfs_fsync(fp, 0);
   filp_close(fp, NULL);
@@ -226,25 +226,28 @@ static long cachezoom_ioctl_uninstall_timer(struct file *filep,
   return 0;
 }
 
-
-static long cachezoom_ioctl_test(struct file *filep,
-  unsigned int cmd, unsigned long arg)
+noinline static void test(void)
 {
   register int _CURRENT_SET_;
-  asm(".align 64");
-  for(_CURRENT_SET_ = 0; _CURRENT_SET_ < CPU_L1_CACHE_SET_COUNT; _CURRENT_SET_++)
-    prime(_SPY_POINTER_LIST_, _CURRENT_SET_);
+    
+  _CURRENT_SET_ = 0;
+    PRIME_64;
   
-  asm volatile(".align 64");
-
-  for(_CURRENT_SET_ = 0; _CURRENT_SET_ < CPU_L1_CACHE_SET_COUNT; _CURRENT_SET_++)
-    probe(_SPY_POINTER_LIST_, _CURRENT_SET_);
+  _CURRENT_SET_ = 0;
+    PROBE_64;
 
   for(_CURRENT_SET_ = 0; _CURRENT_SET_ < CPU_L1_CACHE_SET_COUNT; _CURRENT_SET_++){
     printk(KERN_ALERT "%d: %d\n", _CURRENT_SET_, *(_SPY_POINTER_LIST_ + idx0(_CURRENT_SET_) + 2));
   }
   
   printk("............................................................\n"); 
+}
+
+
+static long cachezoom_ioctl_test(struct file *filep,
+  unsigned int cmd, unsigned long arg)
+{
+  test();
   return 0;
 }
 
